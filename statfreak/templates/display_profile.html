@@ -1,0 +1,131 @@
+<!-- Code by: Mazin Abdulmahmood -->
+{% extends "layout.html" %}
+
+{% block title %}Profiles{% endblock %}
+
+{% block navbar %}
+<script src="https://unpkg.com/swup@latest/dist/swup.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/drop.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/SwupPreloadPlugin.js') }}"></script>
+
+<div class="mb-auto" id="navback">
+  <div class="px-5 ">
+    <h3 class="float-md-start mb-0 p-3 px-5 mx-5" id="title">Statfreak.</h3>
+    <nav class="nav nav-masthead px-5 p-3 mx-5 justify-content-center float-md-end">
+      <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+      {% if not current_user.is_anonymous %}
+      <a class="nav-link" href="{{ url_for('community.blog') }}">Forums</a>
+      <a class="nav-link active" aria-current="page" href="{{ url_for('community.my_profile') }}">My Profile</a>
+      <a class="nav-link" href="{{ url_for('main.wellbeing') }}">My Wellbeing</a>
+      <a class="nav-link" href="{{ url_for('auth.logout') }}">Sign Out</a>
+      <a class="nav-link" href="#">
+        <i class="fa fa-bell"></i>
+        <span class="badge rounded-pill badge-notification bg-danger">4</span>
+      </a>
+      {% else %}
+      <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
+      <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+      {% endif %}
+    </nav>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/animindex.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/typewrite.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.1/js/mdb.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.7.2.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+  integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/para.js') }}"></script>
+
+<div class="tm-hero-prof d-flex justify-content-center align-items-center flex-column text-white">
+  <h1 class="revealOnScroll" data-animation="fadeInUp">This is {{ users.firstname }} {{ users.lastname }}'s profile.
+  </h1>
+</div>
+<div class="py-4"></div>
+<section class="section px-5 mx-5 revealOnScroll  " id="about" data-animation="fadeInUp">
+  <div class="container-fluid d-flex justify-content-center align-items-center flex-column">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <div class="card" style="width: 20em;">
+      <img class="card-img-top" src="{{ photourl }}" alt="User profile photo">
+      <div class="card-body d-flex justify-content-center align-items-center flex-column">
+        <h5 class="card-title">{{ users.username }}</h5>
+        <h6>{{ profiles.area }}</h6>
+        <h6>{{ profiles.university }}</h6>
+        <p class="card-text">{{ profiles.bio }}</p>
+        {% if current_user.id == profiles.user_id%}
+        <form class="px-3" action="{{ url_for('community.edit_profile') }}">
+          <div class="d-flex justify-content-center align-items-center flex-column">
+            <button class="btn btn-dark btn-md" type="submit">Edit my profile</button>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="d-flex flex-column justify-content-center align-items-center py-5 revealOnScroll" data-animation="flipInX"
+  data-timeout="400">
+  <div class="blue-grad color-box d-flex justify-content-center align-items-center flex-column p-3 py-5">
+    <h2 class="text-white">Here are {{ users.firstname }}'s latest posts: </h2>
+    <div class="py-2"></div>
+    {% if posts %}
+    {% for data in posts %}
+    <div class="row card p-3 hover-shadow" style="max-width: 85%; min-width: 85%;">
+      <div class="col">
+        <div class="row">
+          <div class="col">
+            <h4><strong><a href="{{ url_for('community.get_single_blog', id=data.id) }}">{{ data.title }}</a></strong>
+            </h4>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm">
+            <p>{{ data.content }}</p>
+          </div>
+        </div>
+        <div class="row">
+          {% if current_user.id == profiles.user_id %}
+          <div class="d-flex justify-content-center align-items-center flex-row py-1">
+            <a href="{{ url_for('community.delete_blog', id=data.id) }}" class="btn btn-link"
+              data-mdb-ripple-color="dark">Delete</a>
+            <a href="{{ url_for('community.update_blog', id=data.id) }}" class="btn btn-link"
+              data-mdb-ripple-color="dark">Edit my post</a>
+          </div>
+          {% endif %}
+          <div class="col">
+            <p></p>
+            <p>
+              <i class="fas fa-calendar"></i> {{ data.created_at.strftime('%m/%d/%Y, %H:%M:%S') }}
+              | <i class="fas fa-comment"></i> <a href="{{ url_for('community.get_single_blog', id=data.id) }}">{{
+                data.comment_count }} Comments</a>
+              | <i class="fas fa-eye"></i> <a>{{ data.views }} Views</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="py-2"></div>
+    {% endfor %}
+    {% else %}
+    <h3 class="text-white">No posts have been made yet... :(</h2>
+      {% endif %}
+  </div>
+</div>
+
+{% endblock %}

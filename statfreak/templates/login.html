@@ -1,0 +1,90 @@
+<!-- Code by: Mazin Abdulmahmood -->
+{% extends "layout.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block navbar %}
+<script src="https://unpkg.com/swup@latest/dist/swup.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/drop.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/SwupPreloadPlugin.js') }}"></script>
+
+<div class="mb-auto" id="navback">
+  <div class="px-5 ">
+    <h3 class="float-md-start mb-0 p-3 px-5 mx-5" id="title">Statfreak.</h3>
+    <nav class="nav nav-masthead px-5 p-3 mx-5 justify-content-center float-md-end">
+      <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+      <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
+      <a class="nav-link active" aria-current="page" href="{{ url_for('auth.login') }}">Login</a>
+    </nav>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/animindex.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/typewrite.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.1/js/mdb.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.7.2.js"></script>
+
+<div class="tm-hero-log d-flex justify-content-center align-items-center flex-column text-white">
+  <h1 class="revealOnScroll" data-animation="fadeInUp">Login.</h1>
+</div>
+
+<section class="section px-5 mx-5 py-5" id="about">
+  <div class="container d-flex justify-content-center align-items-center flex-column">
+    {% for field, errors in form.errors.items() %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <span>{{ form[field].label }}: {{ ', '.join(errors) }}</span>
+    </div>
+    {% endfor %}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <p class="text-black mb-4">Please fill in the information below to login</p>
+    <form id="forms" method="POST" action="{{ url_for('auth.login') }}">
+      {{ form.csrf_token }}
+      {{ form.email(class="form-control") }}
+      <div class="py-2"></div>
+      {{ form.password(class="form-control") }}
+      <div class="py-2"></div>
+      <div class="d-flex justify-content-center align-items-center">
+        {{ form.remember.label }} <div class="px-2"></div> {{ form.remember() }}
+      </div>
+      <div class="py-2"></div>
+      <div class="d-flex justify-content-center align-items-center flex-column">
+        <button class="btn btn-primary btn-lg" type="submit">Login</button>
+      </div>
+      <div class="py-2"></div>
+      <!-- Register buttons -->
+      <div class="text-center">
+        <p>Not a member? <a href="{{ url_for('auth.signup') }}">Register</a></p>
+        <p>or sign in with:</p>
+        <button type="button" class="btn btn-primary btn-floating mx-1">
+          <i class="fab fa-facebook-f"></i>
+        </button>
+
+        <button type="button" class="btn btn-primary btn-floating mx-1">
+          <i class="fab fa-google"></i>
+        </button>
+
+        <button type="button" class="btn btn-primary btn-floating mx-1">
+          <i class="fab fa-twitter"></i>
+        </button>
+
+        <button type="button" class="btn btn-primary btn-floating mx-1">
+          <i class="fab fa-github"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

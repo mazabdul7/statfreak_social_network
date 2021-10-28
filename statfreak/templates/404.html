@@ -1,0 +1,63 @@
+<!-- Code by: Mazin Abdulmahmood -->
+{% extends "layout.html" %}
+
+{% block title %}404{% endblock %}
+
+{% block navbar %}
+<script src="https://unpkg.com/swup@latest/dist/swup.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/drop.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/SwupPreloadPlugin.js') }}"></script>
+
+<div class="mb-auto" id="navback">
+    <div class="px-5 ">
+        <h3 class="float-md-start mb-0 p-3 px-5 mx-5" id="title">Statfreak.</h3>
+        <nav class="nav nav-masthead px-5 p-3 mx-5 justify-content-center float-md-end">
+            <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+            {% if not current_user.is_anonymous %}
+            <a class="nav-link" href="{{ url_for('community.blog') }}">Forums</a>
+            <a class="nav-link" href="{{ url_for('community.my_profile') }}">My Profile</a>
+            <a class="nav-link" href="{{ url_for('main.wellbeing') }}">My Wellbeing</a>
+            <a class="nav-link" href="{{ url_for('auth.logout') }}">Sign Out</a>
+            <a class="nav-link" href="#" data-mdb-toggle="modal" data-mdb-target="#notiModal">
+                <i class="fa fa-bell"></i>
+                <span class="badge rounded-pill badge-notification bg-danger">6</span>
+            </a>
+            {% else %}
+            <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
+            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+            {% endif %}
+
+        </nav>
+    </div>
+</div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+<!-- MDB -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/animindex.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/typewrite.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.1/js/mdb.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.7.2.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<div class="container-fluid d-flex flex-column justify-content-center align-items-center" style="max-height: 50rem">
+    <div class="row">
+        <div class="col-sm d-flex flex-column justify-content-center align-items-center">
+            <img src="{{ url_for('static', filename='404.png') }}" alt="404" style="max-height: 50%">
+        </div>
+        <div class="col-sm d-flex flex-column justify-content-center align-items-left">
+            <h1 class="text-muted">{{ error }}</h1>
+            <h2 class="text-muted">Oops the page you're looking for doesn't exist or another error occured.</h2>
+            <div class="d-flex flex-column justify-content-center align-items-center py-2">
+                <a href="{{ url_for('main.index') }}" class="btn btn-primary p-3">Take me back home</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

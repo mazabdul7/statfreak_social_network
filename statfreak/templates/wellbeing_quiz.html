@@ -1,0 +1,266 @@
+<!-- Code by: Mazin Abdulmahmood -->
+{% extends "layout.html" %}
+
+{% block title %}Wellbeing{% endblock %}
+
+{% block navbar %}
+<script src="https://unpkg.com/swup@latest/dist/swup.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/drop.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/SwupPreloadPlugin.js') }}"></script>
+
+<div class="mb-auto" id="navback">
+  <div class="px-5 ">
+    <h3 class="float-md-start mb-0 p-3 px-5 mx-5" id="title">Statfreak.</h3>
+    <nav class="nav nav-masthead px-5 p-3 mx-5 justify-content-center float-md-end">
+      <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+      {% if not current_user.is_anonymous %}
+      <a class="nav-link" href="{{ url_for('community.blog') }}">Forums</a>
+      <a class="nav-link" href="{{ url_for('community.my_profile') }}">My Profile</a>
+      <a class="nav-link active" aria-current="page" href="{{ url_for('main.wellbeing') }}">My Wellbeing</a>
+      <a class="nav-link" href="{{ url_for('auth.logout') }}">Sign Out</a>
+      <a class="nav-link" href="#">
+        <i class="fa fa-bell"></i>
+        <span class="badge rounded-pill badge-notification bg-danger">4</span>
+      </a>
+      {% else %}
+      <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
+      <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+      {% endif %}
+    </nav>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/animindex.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/typewrite.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.1/js/mdb.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.7.2.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+  integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/para.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.2/chart.min.js"
+  integrity="sha512-dnUg2JxjlVoXHVdSMWDYm2Y5xcIrJg1N+juOuRi0yLVkku/g26rwHwysJDAMwahaDfRpr1AxFz43ktuMPr/l1A=="
+  crossorigin="anonymous"></script>
+
+<div class="tm-hero-prof d-flex justify-content-center align-items-center flex-column text-white">
+  <h1 class="revealOnScroll" data-animation="fadeInUp">My wellbeing.</h1>
+</div>
+
+<section class="section px-5 mx-5 py-5 " id="about">
+  <!-- Make an entry form below -->
+  <div class="container d-flex justify-content-center align-items-center flex-column">
+    <p class="text-black mb-4">Want to track your wellbeing? Make an entry below.</p>
+    <p class="text-muted">Note: We use entries anonymously to generate wellbeing statistics for areas. By using this
+      feature you consent to the use of this data by us. Entries are made for your profile's borough.</p>
+    <!-- Button trigger modal only visible if cooldown period not in effect -->
+    {% if not cooldown %}
+    <button type="button" class="btn btn-link btn-lg" data-mdb-toggle="modal" data-mdb-target="#postModal">
+      Create a new entry
+    </button>
+    {% else %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <span class="d-flex justify-content-center align-items-center flex-column">
+        <p>Last entry made on: {{ last_post }}</p> You have already made an entry today, please come back later.
+      </span>
+    </div>
+    {% endif %}
+    <p>(Minimum of 2 entries required to see a trend. One entry per day allowed.)</p>
+    <!-- Modal -->
+    <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="postModalLabel">Create a new wellbeing entry</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body d-flex justify-content-center align-items-center flex-column">
+            <p class="text-black mb-4">Please fill in the information below to create a entry</p>
+            <form id="formspopup" method="POST" action="" enctype="multipart/form-data">
+              <form id="formsbody" method="POST" action="{{ url_for('main.wellbeing') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <h4 class="text-muted">How happy have you been the past month?</h4>
+                <div class="slidecontainer py-3 d-flex flex-row">
+                  <input type="range" min="1" max="10" value="5" step="1" class="slider" name="happy" id="myRange">
+                  <h4 id="demo" class="text-muted px-2">5</h4>
+                  <h4 class="text-muted">/10</h4>
+                </div>
+                <h4 class="text-muted">How satisfied have you been the past month?</h4>
+                <div class="slidecontainer py-3 d-flex flex-row">
+                  <input type="range" min="1" max="10" value="5" step="1" class="slider" name="satisfied" id="myRange2">
+                  <h4 id="demo2" class="text-muted px-2">5</h4>
+                  <h4 class="text-muted">/10</h4>
+                </div>
+                <h4 class="text-muted">How anxious have you been the past month?</h4>
+                <div class="slidecontainer py-3 d-flex flex-row">
+                  <input type="range" min="1" max="10" value="5" step="1" class="slider" name="anxiety" id="myRange3">
+                  <h4 id="demo3" class="text-muted px-2">5</h4>
+                  <h4 class="text-muted">/10</h4>
+                </div>
+                <div class="d-flex flex-column align-items-center justify-content-center">
+                  <div class="py-3"></div>
+                  <h4 class="text-muted">Any notes you want to attach to this entry?</h4>
+                  <div class="py-2"></div>
+                  <textarea placeholder="Notes" name="notes" style="min-width: 100%; min-height: 5rem;"></textarea>
+                  <div class="py-3"></div>
+                </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn" data-mdb-dismiss="modal">
+              Close
+            </button>
+            <button class="btn btn-dark " type="submit">Submit entry</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plot wellbeing using jinja+js - we write the script in the html template as opposed to importing so that we can use jinja to pass values -->
+  <div class="container-fluid d-flex flex-column align-items-center justify-content-center">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <!-- Chart plot using chart.js plugin. Ignore the warning, js doesnt like jinja however it still works -->
+    <canvas id="myChart" width="50" height="50" style="max-width: 75%; max-height: 35rem;"></canvas>
+    <script>
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: {{ label| safe }},
+      datasets: [{
+        label: 'Happiness',
+        data: {{ a }},
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+        borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+        borderWidth: 1
+              }, {
+        label: 'Satisfaction',
+        data: {{ b }},
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+        borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+        borderWidth: 1
+              }, {
+        label: 'Anxiety',
+        data: {{ c }},
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+        borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+      ],
+        borderWidth: 1
+              }]
+          },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+              suggestedMin: 0,
+                suggestedMax: 10,
+                  title: {
+              display: true,
+                text: 'Rating out of 10'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+                text: 'Date of entry'
+            }
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+              text: 'My wellbeing entries'
+          },
+          tooltip: {
+            enabled: true
+          }
+        }
+      }
+      });
+    </script>
+  </div>
+  <div class="container-fluid d-flex flex-column align-items-center justify-content-center">
+    <div class="py-2"></div>
+    <h4>Your notes:</h4>
+    {% for note in notes %}
+    {% if note[1] %}
+    <div class="py-2"></div>
+    <div class="row card p-3">
+      <div class="col">
+        <div class="row">
+          <div class="col-sm">
+            <p>{{ note[1] }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <p></p>
+            <p>
+              <i class="fas fa-calendar"></i> Notes for entry on: {{ label_normal[note[0]] }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  <!-- Update entry forum value when the slider is moved -->
+  <script src="{{ url_for('static', filename='assets/dist2/js/wellbeing.js') }}"></script>
+</section>
+
+{% endblock %}

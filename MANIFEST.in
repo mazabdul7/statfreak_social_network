@@ -1,0 +1,3 @@
+graft statfreak/static
+graft statfreak/templates
+global-exclude *.pyc

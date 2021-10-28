@@ -1,0 +1,197 @@
+<!-- Code by: Mazin Abdulmahmood -->
+{% extends "layout.html" %}
+
+{% block title %}Forums{% endblock %}
+
+{% block navbar %}
+<script src="https://unpkg.com/swup@latest/dist/swup.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/drop.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/SwupPreloadPlugin.js') }}"></script>
+
+<div class="mb-auto" id="navback">
+  <div class="px-5 ">
+    <h3 class="float-md-start mb-0 p-3 px-5 mx-5" id="title">Statfreak.</h3>
+    <nav class="nav nav-masthead px-5 p-3 mx-5 justify-content-center float-md-end">
+      <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+      {% if not current_user.is_anonymous %}
+      <a class="nav-link active" aria-current="page" href="{{ url_for('community.blog') }}">Forums</a>
+      <a class="nav-link" href="{{ url_for('community.my_profile') }}">My Profile</a>
+
+      <a class="nav-link" href="{{ url_for('main.wellbeing') }}">My Wellbeing</a>
+      <a class="nav-link" href="{{ url_for('auth.logout') }}">Sign Out</a>
+      <a class="nav-link" href="#">
+        <i class="fa fa-bell"></i>
+        <span class="badge rounded-pill badge-notification bg-danger">4</span>
+      </a>
+      {% else %}
+      <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
+      <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+      {% endif %}
+    </nav>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/animindex.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/typewrite.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.1/js/mdb.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.7.2.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+  integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/para.js') }}"></script>
+
+<div class="tm-hero-blog d-flex justify-content-center align-items-center flex-column text-white">
+  <h1 class="revealOnScroll" data-animation="fadeInUp">All posts.</h1>
+</div>
+<div>
+  <nav class="blog-menu navbar navbar-light bg-light text-black">
+    <div class="container-fluid d-flex justify-content-center align-items-center flex-row">
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-link" data-mdb-toggle="modal" data-mdb-target="#postModal">
+        Create a new post
+      </button>
+      <!-- Modal -->
+      <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="postModalLabel">Create a new post</h5>
+              <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center flex-column">
+              <p class="text-black mb-4">Please fill in the information below to create a post</p>
+              <form id="formspopup" method="POST" action="" enctype="multipart/form-data">
+                {{ form.csrf_token }}
+                <div class="px-2">{{ form.title.label }}:</div>{{ form.title(class="form-control") }}
+                <div class="py-2"></div>
+                <div class="px-2">{{ form.content.label }}:</div>{{ form.content(class="form-control") }}
+                <div class="py-2"></div>
+                <div class="d-flex justify-content-center align-items-center">
+                  <div class="px-2">{{ form.area.label }}</div>{{ form.area(class="form-control") }}
+                </div>
+                <div class="py-3"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn" data-mdb-dismiss="modal">
+                Close
+              </button>
+              <button type="submit" class="btn btn-dark">Create post</button>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="px-3"></div>
+      <form class="d-flex input-group w-auto" action="{{ url_for('community.search') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="search" name="search_term" class="form-control" placeholder="Search posts, tags..."
+          aria-label="Search" />
+        <button class="btn btn-outline-primary" type="submit" data-mdb-ripple-color="dark">Search</button>
+      </form>
+    </div>
+  </nav>
+</div>
+
+<section class="section px-5 mx-5 py-5 " id="about">
+  <div class="container d-flex justify-content-center align-items-center flex-column">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    {% for field, errors in form.errors.items() %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <span>{{ form[field].label }}: {{ ', '.join(errors) }}</span>
+    </div>
+    {% endfor %}
+    <p class="text-muted mb-5">This is the forum area. Use the forums to connect with others, find roomates and hold
+      discussions on your experiences visiting different London boroughs.</p>
+  </div>
+  {% if search %}
+  <div class="container-fluid d-flex justify-content-center align-items-center flex-column">
+    <h4 class="text-muted">You are viewing search results for: "{{ term }}"</h2>
+      <a href="{{ url_for('community.blog') }}" class="btn btn-link" data-mdb-ripple-color="dark">Back to all posts</a>
+  </div>
+  <div class="py-2"></div>
+  {% endif %}
+  <div class="container-fluid d-flex justify-content-center align-items-center flex-row px-2">
+    {% for post in posts %}
+    <div class="card" style="width: 18rem;">
+      <img class="card-img-top rounded-circle px-5 py-2 " src="{{ post[2] }}" alt="User profile photo">
+      <div class="card-body">
+        <h5 class="card-title">{{ post[0].title }}</h5>
+        <p class="card-text">{{ post[0].content[0:75] }}...</p>
+      </div>
+      {% if current_user.username==post[1].username %}
+      <div class="d-flex justify-content-center align-items-center flex-row ">
+        <a href="{{ url_for('community.delete_blog', id=post[0].id) }}" class="btn btn-link"
+          data-mdb-ripple-color="dark">Delete</a>
+        <a href="{{ url_for('community.update_blog', id=post[0].id) }}" class="btn btn-link"
+          data-mdb-ripple-color="dark">Edit my post</a>
+      </div>
+      {% else %}
+      <div class="d-flex justify-content-center align-items-center flex-row ">
+        <button type="button" class="btn btn-outline-primary btn-lg btn-floating" data-mdb-ripple-color="dark">
+          <i class="fas fa-thumbs-up"></i>
+        </button>
+        <div class="px-3"></div>
+        <a href="{{ url_for('community.get_single_blog', id=post[0].id) }}" class="btn btn-outline-warning btn-lg btn-floating" data-mdb-ripple-color="dark">
+          <i class="fas fa-comment"></i>
+        </a>
+      </div>
+      {% endif %}
+      <div class="py-1"></div>
+      <ul class="list-group list-group-flush text-muted">
+        <li class="list-group-item">Created by: {{ post[1].username }}</li>
+        <li class="list-group-item"><i class="fas fa-tags"></i>
+          <div class="chip hover-shadow"><a href="{{ url_for('community.search', term=post[3].name ) }}">{{ post[3].name }}</a></div>
+        </li>
+      </ul>
+      <div class="card-body">
+        <a href="{{ url_for('community.get_single_blog', id=post[0].id) }}" class="card-link float-md-start">View
+          post</a>
+        <a href="{{ url_for('community.display_profiles', username=post[1].username) }}"
+          class="card-link float-md-end">View user</a>
+      </div>
+      <div class="card-footer text-muted d-flex justify-content-between bg-transparent border-top-0">
+        <div class="views">{{ post[0].created_at.strftime('%m/%d/%Y, %H:%M') }}</div>
+        <div class="stats">
+          <i class="far fa-eye"></i> {{ post[0].views }}
+          <i class="far fa-comment"></i> {{ post[0].comment_count }}
+        </div>
+
+      </div>
+    </div>
+    <div class="px-2"></div>
+    {% if post[4] %}
+    </div>
+    <div class="container-fluid d-flex justify-content-center align-items-center flex-row px-2">
+    {% endif %}
+    {% endfor %}
+  </div>
+  <div class="d-flex flex-column py-3 justify-content-center align-items-center">
+    <nav aria-label="...">
+      <ul class="pagination">
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+        </li>
+        <li class="page-item active" aria-current="page">
+          <a class="page-link" href="#">1 <span class="visually-hidden">(current)</span></a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</section>
+{% endblock %}

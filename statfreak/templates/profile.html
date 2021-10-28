@@ -1,0 +1,126 @@
+<!-- Code by: Mazin Abdulmahmood -->
+{% extends "layout.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block navbar %}
+<script src="https://unpkg.com/swup@latest/dist/swup.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/drop.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/SwupPreloadPlugin.js') }}"></script>
+
+<div class="mb-auto" id="navback">
+  <div class="px-5 ">
+    <h3 class="float-md-start mb-0 p-3 px-5 mx-5" id="title">Statfreak.</h3>
+    <nav class="nav nav-masthead px-5 p-3 mx-5 justify-content-center float-md-end">
+      <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+      {% if not current_user.is_anonymous %}
+      <a class="nav-link" href="{{ url_for('community.blog') }}">Forums</a>
+      <a class="nav-link active" aria-current="page" href="{{ url_for('community.my_profile') }}">My Profile</a>
+      <a class="nav-link" href="{{ url_for('main.wellbeing') }}">My Wellbeing</a>
+      <a class="nav-link" href="{{ url_for('auth.logout') }}">Sign Out</a>
+      <a class="nav-link" href="#">
+        <i class="fa fa-bell"></i>
+        <span class="badge rounded-pill badge-notification bg-danger">4</span>
+      </a>
+      {% else %}
+      <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
+      <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+      {% endif %}
+    </nav>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/animindex.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/typewrite.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.1/js/mdb.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.7.2.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+  integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/para.js') }}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/css/ion.rangeSlider.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.0/js/ion.rangeSlider.min.js"></script>
+
+<div class="tm-hero-prof d-flex justify-content-center align-items-center flex-column text-white">
+  {% if create %}
+  <h1 class="revealOnScroll" data-animation="fadeInUp">Create your profile</h1>
+  {% else %}
+  <h1 class="revealOnScroll" data-animation="fadeInUp">Edit your profile</h1>
+  {% endif %}
+</div>
+
+<section class="section px-5 mx-5 py-5 " id="about">
+  <div class="container d-flex justify-content-center align-items-center flex-column">
+    {% for field, errors in form.errors.items() %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <span>{{ form[field].label }}: {{ ', '.join(errors) }}</span>
+    </div>
+    {% endfor %}
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <p class="text-black mb-4">Please fill in your information below</p>
+    <form id="formsbody" method="POST" action="" enctype="multipart/form-data">
+      {{ form.csrf_token }}
+      {{ form.username(class="form-control") }}
+      <div class="py-2"></div>
+      {{ form.bio(class="form-control") }}
+      <div class="py-2"></div>
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="px-1">{{ form.area.label }}</div>{{ form.area(class="form-control") }}<i class="fas fa-caret-down px-1"></i>
+      </div>
+      <div class="py-2"></div>
+      <p class="d-flex justify-content-center align-items-center text-black mb-4">Please fill in your renting preferences below</p>
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="px-1">{{ form.university.label }}</div>{{ form.university(class="form-control") }}<i class="fas fa-caret-down px-1"></i>
+      </div>
+      <div class="py-2"></div>
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="px-1">{{ form.roommates.label }}</div>{{ form.roommates(class="form-control") }}<i class="fas fa-caret-down px-1"></i>
+      </div>
+      <div class="py-2"></div>
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-2">What is your budget? </div>
+        <div class='container col-10 mt-4'>
+          <input type="text" class="js-range-slider" name="my_range" value=""/>    
+        </div>
+      </div>
+      <div class="py-2"></div>
+      {{ form.photo(class="form-control") }}
+      <div class="py-3"></div>
+      <div class="d-flex justify-content-center align-items-center flex-column">
+        {% if create %}
+        <button class="btn btn-dark btn-lg" type="submit">Create Profile</button>
+        {% else %}
+        <button class="btn btn-dark btn-lg" type="submit">Update Profile</button>
+        {% endif %}
+      </div>
+    </form>
+    <script>
+      $(".js-range-slider").ionRangeSlider({
+          skin: "round",
+          step: 50,
+          type: "double",
+          grid: true,
+          min: 0,
+          max: 5000,
+          from: 200,
+          to: 3500,
+          prefix: "£"
+      });
+      </script>
+  </div>
+</section>
+
+{% endblock %}

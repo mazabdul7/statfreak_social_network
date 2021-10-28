@@ -1,0 +1,475 @@
+<!-- Code by: Mazin Abdulmahmood, Ben Li, Paul Ho -->
+{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block navbar %}
+<!-- Swup allows for preload of pages, as well as seamless refreshing for a better browsing experience for the user -->
+<script src="https://unpkg.com/swup@latest/dist/swup.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/drop.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/SwupPreloadPlugin.js') }}"></script>
+
+<div class="mb-auto" id="navback">
+  <div class="px-5 ">
+    <h3 class="float-md-start mb-0 p-3 px-5 mx-5" id="title">Statfreak.</h3>
+    <nav class="nav nav-masthead px-5 p-3 mx-5 justify-content-center float-md-end">
+      <a class="nav-link active" aria-current="page" href="{{ url_for('main.index') }}">Home</a>
+      {% if not current_user.is_anonymous %}
+      <a class="nav-link" href="{{ url_for('community.blog') }}">Forums</a>
+      <a class="nav-link" href="{{ url_for('community.my_profile') }}">My Profile</a>
+      <a class="nav-link" href="{{ url_for('main.wellbeing') }}">My Wellbeing</a>
+      <a class="nav-link" href="{{ url_for('auth.logout') }}">Sign Out</a>
+      <a class="nav-link" href="#" data-mdb-toggle="modal" data-mdb-target="#notiModal">
+        <i class="fa fa-bell"></i>
+        <span class="badge rounded-pill badge-notification bg-danger">4</span>
+      </a>
+      {% else %}
+      <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
+      <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+      {% endif %}
+
+    </nav>
+  </div>
+</div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<!-- MDB -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.js"></script>
+<!-- Animations -->
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/animindex.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='assets/dist2/js/typewrite.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.1/js/mdb.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.7.2.js"></script>
+<!-- Font Awesome Icons -->
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+  integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- BANNER -->
+{% if not current_user.is_anonymous %}
+<div class="tm-hero-loggedin d-flex justify-content-center align-items-center flex-column text-white">
+  <h1 class="revealOnScroll" data-animation="fadeInUp">Welcome back, {{ current_user.firstname }}.</h1>
+</div>
+{% else %}
+<div class="tm-hero d-flex justify-content-center align-items-center flex-column text-white">
+  <h1>
+    Discover your next <a href="" class="typewrite text-white" data-period="2000"
+      data-type='[ "journey.", "life.", "step.", "home." ]'>
+      <span class="wrap"></span>
+    </a>
+  </h1>
+  <p class="lead revealOnScroll" data-animation="fadeInUp">Starting university soon? Want to find the perfect area?
+    That's what we're here for.</p>
+  <form class="px-3" action="{{ url_for('auth.signup') }}">
+    <button class="btn btn-outline-light btn-lg" type="submit">Lets go</button>
+  </form>
+</div>
+{% endif %}
+
+
+<!-- NOTIFICATIONS and HELP MODALS -->
+<div class="modal fade" id="notiModal" tabindex="-1" aria-labelledby="notiModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">My notifications</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <a href="{{ url_for('community.get_single_blog', id=5) }}" class="text-black">
+          <div class="list-group-item hover-shadow"><i class="fa fa-star px-2"></i>New comment on one of your
+            posts</div>
+          <div class="list-group-item hover-shadow"><i class="fa fa-plus px-2"></i>New post for your borough</div>
+          <div class="list-group-item hover-shadow"><i class="fa fa-user px-2"></i>New roomate request</div>
+          <div class="list-group-item hover-shadow"><i class="fa fa-bell px-2"></i>Monthly wellbeing quiz overdue</div>
+        </a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Need help?</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="py-2">If you need help or would like to report a bug, please contact the adminstrator here:
+          zceebda@ucl.ac.uk</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END MODALS -->
+
+{% if not current_user.is_anonymous %}
+<div class="row" id="body-row">
+  <!-- Sidebar from Bootstrap-->
+  <div id="sidebar-container" class="sidebar-expanded d-none d-md-block">
+    <!-- d-* hiddens the Sidebar in smaller devices. Its itens can be kept on the Navbar 'Menu' -->
+    <!-- Bootstrap List Group -->
+    <ul class="list-group">
+      <li class="list-group-item sidebar-separator-title text-muted bg-dark d-flex align-items-center menu-collapsed">
+        <small>NAVIGATION</small>
+      </li>
+      <a href="#submenu1" data-toggle="collapse" aria-expanded="false"
+        class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-dashboard fa-fw mr-3"></span>
+          <span class="menu-collapsed">Dashboard</span>
+        </div>
+      </a>
+      <!-- Submenu content -->
+      <div id='submenu1' class="collapse sidebar-submenu">
+      </div>
+      <a href="#submenu2" data-toggle="collapse" aria-expanded="false"
+        class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-user fa-fw mr-3"></span>
+          <span class="menu-collapsed">My Settings</span>
+          <span class="submenu-icon ml-auto"></span>
+        </div>
+      </a>
+      <!-- Submenu content -->
+      <div id='submenu2' class="collapse sidebar-submenu">
+        <a href="{{ url_for('community.edit_profile') }}"
+          class="list-group-item list-group-item-action bg-dark text-white">
+          <span class="menu-collapsed">My preferences</span>
+        </a>
+      </div>
+      <!-- Separator with title -->
+      <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+        <small>SERVICES</small>
+      </li>
+      <!-- /END Separator -->
+      <a href="{{ url_for('community.blog') }}" class="bg-dark list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-search fa-fw mr-3"></span>
+          <span class="menu-collapsed"> Find Roommates </span>
+        </div>
+      </a>
+      <!-- Separator without title -->
+      <li class="list-group-item sidebar-separator menu-collapsed"></li>
+      <!-- /END Separator -->
+      <a href="#" data-mdb-toggle="modal" data-mdb-target="#helpModal"
+        class="bg-dark list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-start align-items-center">
+          <span class="fa fa-question fa-fw mr-3"></span>
+          <span class="menu-collapsed">Help</span>
+        </div>
+      </a>
+    </ul><!-- List Group END-->
+  </div><!-- sidebar-container END -->
+  <!-- MAIN -->
+  <div class="col p-4">
+
+    <h1 class="display-4">My Dashboard</h1>
+    <p class="text-muted">The dashboard provides statsitical information for each London area to help you decide which
+      one works best for you. Make sure to <a href="url_for('community.blog')">check out the forums</a>
+      to connect with others and discuss your experiences renting.</p>
+    <div class="card">
+      <head>
+        <style>
+          .tabcontent {
+            display: none;
+          }
+        </style>
+      </head>
+      <nav>
+        <div class="tab nav nav-tabs">
+          {% if api %}
+          <button class="tablinks nav-link" onclick="openGraph(event, 'price-stat')">Pricing Statistics</button>
+          {% else %}
+          <button class="tablinks nav-link active" onclick="openGraph(event, 'price-stat')">Pricing Statistics</button>
+          {% endif %}
+          <button class="tablinks nav-link" onclick="openGraph(event, 'crime-stat')">Crime & National Wellbeing
+            Statistics</button>
+          <button class="tablinks nav-link" onclick="openGraph(event, 'leaderboard')">Community Borough
+            Leaderboards</button>
+          {% if api %}
+          <button class="tablinks nav-link active" onclick="openGraph(event, 'distance-time')">Distance API
+            Calculator</button>
+          {% else %}
+          <button class="tablinks nav-link" onclick="openGraph(event, 'distance-time')">Distance API Calculator</button>
+          {% endif %}
+        </div>
+
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        {% if api %}
+        <div id="price-stat" class="tabcontent">
+        {% else %}
+        <div id="price-stat" class="tabcontent tab-pane fade show active">
+        {% endif %}
+          <iframe class="container-fluid" src="/dashapp" style="min-height: 70rem;"></iframe>
+        </div>
+
+          <div id="crime-stat" class="tabcontent">
+            <iframe class="container-fluid" src="/dashapp2" style="min-height: 70rem;"></iframe>
+          </div>
+
+          <div id="leaderboard" class="tabcontent">
+            <div class="py-2"></div>
+            <div class="container">
+              <p>Rankings for boroughs based on user-generated wellbeing statistics. Each borough below is ranked
+                according
+                to a rating factor calculated from
+                the average happiness, satisfaction and anxiety experienced by users within these boroughs. A higher
+                rating
+                means a happier borough.
+              </p>
+            </div>
+            <div class="d-flex flex-column justify-content-center align-items-center">
+              <p class="text-muted">Note: Boroughs not rated are due to lack of information available from users for
+                these
+                boroughs.</p>
+              <p>Want to contribute to the rankings? <a href="{{ url_for('main.wellbeing') }}">Make an entry</a> in your
+                wellbeing diary for your borough!</p>
+            </div>
+            <div class="py-1"></div>
+            <table class="table table-hover">
+              <thead>
+                <tr class="table-dark">
+                  <th scope="col"># Ranking</th>
+                  <th scope="col">Borough</th>
+                  <th scope="col">Avg Happiness Rating</th>
+                  <th scope="col">Avg Satisfaction Rating</th>
+                  <th scope="col">Avg Anxiety Rating</th>
+                  <th scope="col">Rating Factor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Change row colour for leaderboard ranking -->
+                {% for area in ratings %}
+                {% if ratings[area]["position"] == 1 %}
+                <tr class="table-success">
+                  {% elif ratings[area]["position"] == 2 %}
+                <tr class="table-warning">
+                  {% elif ratings[area]["position"] == 3 %}
+                <tr class="table-info">
+                  {% else %}
+                <tr>
+                  {% endif %}
+                  {% if ratings[area]["happiness"]==0 or ratings[area]["happiness"]==None %}
+                  <td>-</td>
+                  <td><a href="{{ url_for('community.search', term=area) }}">{{ area }}</a></td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  {% else %}
+                  <th scope="row">{{ ratings[area]["position"] }}</th>
+                  <td><a href="{{ url_for('community.search', term=area) }}">{{ area }}</a></td>
+                  <td>{{ ratings[area]["happiness"] }}</td>
+                  <td>{{ ratings[area]["satisfaction"] }}</td>
+                  <td>{{ ratings[area]["anxiety"] }}</td>
+                  <td>{{ ratings[area]["rating_factor"] }}</td>
+                  {% endif %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% if api %}
+          <div id="distance-time" class="tabcontent tab-pane fade show active">
+            {% else %}
+            <div id="distance-time" class="tabcontent">
+              {% endif %}
+              <div class="container py-2">
+                <p class="text-muted">This tool utilises Google Maps API to allow you to see distances and times between
+                  London boroughs and universities.</p>
+              </div>
+              <div class="container-fluid d-flex justify-content-center align-items-center">
+                <img src="{{ url_for('static', filename='travel.png') }}" alt="travel" style="max-height: 50%">
+              </div>
+              <div class="container-fluid w-50 py-2">
+                <form class="d-flex input-group w-auto px-3" action="/distance_api" method="POST">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token()}}" />
+                  <label for="Number One">Starting Point</label>
+                  <div class="px-2"></div>
+                  <input type="text" class="form-control" name="text1" />
+                  <div class="px-2"></div>
+                  <label for="Number Two">Ending Point</label>
+                  <div class="px-2"></div>
+                  <input type="text" class="form-control" name="text2" /> <br>
+                  <div class="d-flex flex-row justify-content-center align-items-center px-4">
+                    <button class="btn btn-primary" id="clicked">Submit</button>
+                  </div>
+                </form>
+              </div>
+              <div class="container-fluid d-flex flex-column align-items-center justify-content-center py-3">
+              {% with messages = get_flashed_messages(with_categories=True) %}
+              {% if messages %}
+              {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                <span>{{ message }}</span>
+              </div>
+              {% endfor %}
+              {% endif %}
+              {% endwith %}
+              </div>
+            </div>
+          </div>
+          <!-- JS to control opening of tabs -->
+          <script>
+            function openGraph(evt, cityName) {
+              var i, tabcontent, tablinks;
+              tabcontent = document.getElementsByClassName("tabcontent");
+              for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+              }
+              tablinks = document.getElementsByClassName("tablinks");
+              for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+              }
+              document.getElementById(cityName).style.display = "block";
+              evt.currentTarget.className += " active";
+            }
+          </script>
+        </div>
+
+      </div><!-- Main Col END -->
+    </div><!-- body-row END -->
+
+    <!-- Not logged in content -->
+    {% else %}
+    <section class="section p-5 m-5" id="about">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-xs-12">
+            <div class="left-text-content">
+              <div class="section-heading">
+                <h6 id="title" class="revealOnScroll" data-animation="fadeInUp">About Us</h6>
+                <h2 class="revealOnScroll" data-animation="fadeInUp">We Help You Find The Best</h2>
+              </div>
+              <p class="revealOnScroll" data-animation="fadeInUp">Lorem Ipsum is simply dummy text of the
+                printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text
+                ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make
+                a type specimen book. It has survived not only five centuries, but also the leap into
+                electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s
+                with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with
+                desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+                been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+                galley of type and scrambled it to make a type specimen book. It has survived not only five
+                centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+                passages, and more recently with desktop publishing software like Aldus PageMaker including
+                versions of Lorem Ipsum
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-xs-12">
+            <div class="right-content">
+              <div class="thumb">
+                <img src="{{ url_for('static', filename='accom.jpg') }}" alt="Student accom"
+                  class="block revealOnScroll" data-animation="flipInX" data-timeout="400">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="py-4"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-xs-12">
+            <div class="left-text-content">
+              <div class="thumb">
+                <img src="{{ url_for('static', filename='graph.png') }}" alt="Student accom"
+                  class="block revealOnScroll" data-animation="flipInX" data-timeout="400">
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-xs-12">
+            <div class="right-content">
+              <div class="section-heading">
+                <h2 class="revealOnScroll" data-animation="fadeInUp">We Show You The Most Reliable
+                  Statistics For Each London Bourogh</h2>
+              </div>
+              <p class="revealOnScroll" data-animation="fadeInUp">Contrary to popular belief, Lorem Ipsum is
+                not simply random text. It has roots in a piece of classical Latin literature from 45 BC,
+                making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney
+                College in Virginia, looked up one of the more obscure Latin words, consectetur, from a
+                Lorem Ipsum passage, and going through the cites of the word in classical literature,
+                discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of
+                "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC.
+                This book is a treatise on the theory of ethics, very popular during the Renaissance. The
+                first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section
+                1.10.32.
+                <br>The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those
+                interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are
+                also reproduced in their exact original form, accompanied by English versions from the 1914
+                translation by H. Rackham.
+              </p>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="py-4"></div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-xs-12">
+            <div class="left-text-content">
+              <div class="section-heading">
+                <h2 class="revealOnScroll" data-animation="fadeInUp">Connect With Others and Find Roomates
+                  To Share With</h2>
+              </div>
+              <p class="revealOnScroll" data-animation="fadeInUp">Lorem Ipsum is simply dummy text of the
+                printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text
+                ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make
+                a type specimen book. It has survived not only five centuries, but also the leap into
+                electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s
+                with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with
+                desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+                been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+                galley of type and scrambled it to make a type specimen book. It has survived not only five
+                centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
+                It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+                passages, and more recently with desktop publishing software like Aldus PageMaker including
+                versions of Lorem Ipsum
+                <br><br> Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+                has been the industry's standard dummy text ever since the 1500s, when an unknown printer
+                took a galley of type and scrambled it to make a type specimen book. It has survived not
+                only five centuries, but also the leap into electronic typesetting, remaining essentially
+                unchanged. It was popularised in the 1960s with the release of Letraset sheets containing
+                Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
+                PageMaker including versions of Lorem Ipsum
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-xs-12">
+            <div class="right-content">
+              <div class="thumb">
+                <img src="{{ url_for('static', filename='unistud.jpg') }}" alt="Student accom"
+                  class="block revealOnScroll" data-animation="flipInX" data-timeout="400">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+<div class="py-3"></div>
+<div class="d-flex justify-content-center align-items-center flex-column t-5"><a href="#"><i
+      class="fa fa-arrow-up fa-lg"></i></a></div>
+</section>
+{% endif %}
+{% endblock %}
