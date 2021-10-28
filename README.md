@@ -6,9 +6,5 @@ To run please install the dependencies located in requirements.txt then run the 
   Video of demo: https://youtu.be/Bi-2y9AYU88  
   
 
-## A COMP0034 Project - Group 2
+## A COMP0034 Project
 - Mazin Abdulmahmood
-- Toby Katerbau
-- Ben Li
-- Paul Ho
-  
